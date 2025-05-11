@@ -69,12 +69,15 @@ exports.LoginUser=async(req,res)=>{
 }
 
 
-//--login user only to acess sample       --api/demo   
-exports.Demo=(req,res)=>{
+
+//--login user only to acess sample       --api/user   
+exports.getUserProfile= async(req,res)=>{
+    const user=await UserModel.findById(req.user.id)
 
     res.status(200).json({
             success:true,
-            message:"hello world"
+            user,
+            message:"hello user"
         })
 }
 
@@ -160,4 +163,29 @@ exports.VerifyOtpAndResetPassword = async (req, res) => {
         message: "Password has been reset successfully"
     });
 };
+
+
+
+
+//password change      --api/password/change
+exports.Changepassword=async(req,res)=>{
+const user=await UserModel.findById(req.user.id).select("+password")
+
+    //chec old pass
+    if(!await user.isValidPassword(req.body.oldPassword)){
+        res.status(402).json({
+            success:false,
+            message:"old passWord is incorrect"
+        })
+    }
+
+        //assign new password
+        user.password=req.body.newPassword
+        await user.save();
+
+        res.status(200).json({
+        success: true,
+        message: "Password has been change successfully"
+    });
+    }
 
