@@ -18,6 +18,7 @@ const userSchema=new mongoose.Schema({
     phone:{
         type:Number,
         required:[true,"Please Enter Password"],
+        unique:true,
        validate: {
         validator: function (v) {
             return /^\d{10}$/.test(v); // Regex: exactly 10 digits
